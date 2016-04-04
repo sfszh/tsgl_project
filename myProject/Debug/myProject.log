@@ -1,0 +1,22 @@
+﻿Build started 2/04/2016 10:43:26 p.m..
+     1>Project "C:\Users\Rui\Documents\Dev\TSGL\myProject\myProject.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Rui\Documents\Dev\TSGL\Debug\myProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\Users\Rui\Documents\Dev\TSGL\lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Rui\Documents\Dev\TSGL\Debug\myProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Rui\Documents\Dev\TSGL\Debug\myProject.lib" /MACHINE:X86 Debug\testAlphaRectangle.obj
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: __thiscall tsgl::ColorFloat::ColorFloat(float,float,float,float)" (??0ColorFloat@tsgl@@QAE@MMMM@Z) referenced in function "void __cdecl tsgl::`dynamic initializer for 'BLACK''(void)" (??__EBLACK@tsgl@@YAXXZ)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: __thiscall tsgl::ColorInt::ColorInt(int,int,int,int)" (??0ColorInt@tsgl@@QAE@HHHH@Z) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: __thiscall tsgl::ColorInt::operator struct tsgl::ColorFloat(void)" (??BColorInt@tsgl@@QAE?AUColorFloat@1@XZ) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: __thiscall tsgl::Canvas::Canvas(int,int,int,int,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,double)" (??0Canvas@tsgl@@QAE@HHHHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@N@Z) referenced in function _main
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: virtual __thiscall tsgl::Canvas::~Canvas(void)" (??1Canvas@tsgl@@UAE@XZ) referenced in function _main
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: static int __cdecl tsgl::Canvas::getDisplayHeight(void)" (?getDisplayHeight@Canvas@tsgl@@SAHXZ) referenced in function _main
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: bool __thiscall tsgl::Canvas::isOpen(void)" (?isOpen@Canvas@tsgl@@QAE_NXZ) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: int __thiscall tsgl::Canvas::getWindowHeight(void)" (?getWindowHeight@Canvas@tsgl@@QAEHXZ) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: int __thiscall tsgl::Canvas::getWindowWidth(void)" (?getWindowWidth@Canvas@tsgl@@QAEHXZ) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: virtual void __thiscall tsgl::Canvas::run(void (__cdecl*)(class tsgl::Canvas &))" (?run@Canvas@tsgl@@UAEXP6AXAAV12@@Z@Z) referenced in function _main
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: void __thiscall tsgl::Canvas::setBackgroundColor(struct tsgl::ColorFloat)" (?setBackgroundColor@Canvas@tsgl@@QAEXUColorFloat@2@@Z) referenced in function _main
+     1>testAlphaRectangle.obj : error LNK2019: unresolved external symbol "public: void __thiscall tsgl::Canvas::sleep(void)" (?sleep@Canvas@tsgl@@QAEXXZ) referenced in function "void __cdecl alphaRectangleFunction(class tsgl::Canvas &)" (?alphaRectangleFunction@@YAXAAVCanvas@tsgl@@@Z)
+     1>C:\Users\Rui\Documents\Dev\TSGL\Debug\myProject.exe : fatal error LNK1120: 12 unresolved externals
+     1>Done Building Project "C:\Users\Rui\Documents\Dev\TSGL\myProject\myProject.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.36
