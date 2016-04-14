@@ -70,8 +70,8 @@ void projectileFunction(Canvas& can) {
     can.clear();
     targetX += coordinateChangerX;  //Horizontal movement
     targetY -= coordinateChangerY; //Vertical movement
-    can.drawCircle(targetX, targetY, 50, 32, blueTarget, true);   //Outer circle
-    can.drawCircle(targetX, targetY, 30, 32, redTarget, true);  //Middle
+    can.drawCircle(targetX+25, targetY+25, 10, 32, blueTarget, true);   //Outer circle
+    can.drawCircle(targetX+15, targetY+15, 10, 32, redTarget, true);  //Middle
     can.drawCircle(targetX, targetY, 10, 32, yellowTarget, true); //Inner
     can.resumeDrawing();
     if(targetX >= centerX) { //If it hits the middle of the screen, invert the vertical direction

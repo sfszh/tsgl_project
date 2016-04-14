@@ -24,16 +24,20 @@ void alphaRectangleFunction(Canvas& can) {
 	*/
 	while (can.isOpen())
 	{
-		can.sleep();
+		
 		can.clear();
 		flock.update();
-		std::cout << flock.size() << std::endl;
+#pragma omp parallel num_threads(flock.size())
 		for (int i =0; i < flock.size(); i++) {
 			Boid2d *b = flock.get(i);
 			//can.drawRectangle(b->x, b->y, 0.01, 0.01,  ColorInt(MAX_COLOR, MAX_COLOR, MAX_COLOR, 16));
-			can.drawCircle(b->x, b->y, 10, 32, ColorInt(rand()%MAX_COLOR, rand()%MAX_COLOR, rand()%MAX_COLOR, 16), true);
-			
+			//std::cout << b->x << ',' << b->y << std::endl;
+			can.drawCircle(b->x  , b->y , 10, 32, ColorInt(MAX_COLOR, MAX_COLOR, MAX_COLOR, 16), true);
+			//can.sleep();
+#pragma omp barrier		
 		}
+
+		//can.sleep();
 		can.resumeDrawing();
 	}
 }
@@ -46,7 +50,7 @@ int main(int argc, char* argv[]) {
       w = h = 960;            //If not, set the width and height to a default value
     Canvas c(-1, -1, w, h, "Fancy Rectangles");
     c.setBackgroundColor(BLACK);
-	flock.setup(50,w/2,h/2,100);
+	flock.setup(10,w/2,h/2,100);
 	flock.setBounds(0,0,w,h);
 	flock.setBoundmode(1);
     c.run(alphaRectangleFunction);

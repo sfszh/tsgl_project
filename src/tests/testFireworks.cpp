@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
   if (w <= 0 || h <= 0)     //Checked the passed width and height if they are valid
     w = h = 960;            //If not, set the width and height to a default value
   int t = (argc > 3) ? atoi(argv[3]) : omp_get_num_procs();
-  int f = (argc > 4) ? atoi(argv[4]) : 50;
+  int f = (argc > 4) ? atoi(argv[4]) : 10;
   int s = (argc > 5) ? atoi(argv[5]) : 10;
   Canvas c(-1, -1, w, h, "Fireworks!");
   c.setBackgroundColor(BLACK);
