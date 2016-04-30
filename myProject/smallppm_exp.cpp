@@ -1,8 +1,6 @@
-// expanded smallppm (code is exactly the same as smallppm.cpp but with more comments)
-
-#include <math.h>   // smallppm, Progressive Photon Mapping by T. Hachisuka
-#include <stdlib.h> // originally smallpt, a path tracer by Kevin Beason, 2008
-#include <stdio.h>  // Usage: ./smallppm 100000 && xv image.ppm
+#include <math.h>   
+#include <stdlib.h> 
+#include <stdio.h>  
 #include <iostream>
 #include <tsgl.h>
 using namespace tsgl;
