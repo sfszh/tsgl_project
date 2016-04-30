@@ -59,7 +59,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Rui\Documents\Dev\TSGL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -83,6 +83,7 @@
     <ClCompile Include="Boid2d.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyUtils.cpp" />
+    <ClCompile Include="smallppm_exp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttractionPoint2d.h" />

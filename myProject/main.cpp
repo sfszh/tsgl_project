@@ -25,7 +25,7 @@ void alphaRectangleFunction(Canvas& can) {
 	while (can.isOpen())
 	{
 		
-		can.clear();
+		//can.clear();
 		flock.update();
 #pragma omp parallel num_threads(flock.size())
 		for (int i =0; i < flock.size(); i++) {
@@ -33,16 +33,18 @@ void alphaRectangleFunction(Canvas& can) {
 			//can.drawRectangle(b->x, b->y, 0.01, 0.01,  ColorInt(MAX_COLOR, MAX_COLOR, MAX_COLOR, 16));
 			//std::cout << b->x << ',' << b->y << std::endl;
 			can.drawCircle(b->x  , b->y , 10, 32, ColorInt(MAX_COLOR, MAX_COLOR, MAX_COLOR, 16), true);
-			//can.sleep();
+			can.sleep();
 #pragma omp barrier		
 		}
 
-		//can.sleep();
-		can.resumeDrawing();
+		can.sleep();
+		//can.resumeDrawing();
 	}
 }
 
 //Takes command-line arguments for the width and height of the screen
+
+/*
 int main(int argc, char* argv[]) {
     int w = (argc > 1) ? atoi(argv[1]) : 0.9*Canvas::getDisplayHeight();
     int h = (argc > 2) ? atoi(argv[2]) : w;
@@ -50,8 +52,9 @@ int main(int argc, char* argv[]) {
       w = h = 960;            //If not, set the width and height to a default value
     Canvas c(-1, -1, w, h, "Fancy Rectangles");
     c.setBackgroundColor(BLACK);
-	flock.setup(10,w/2,h/2,100);
+	flock.setup(2,w/2,h/2,100);
 	flock.setBounds(0,0,w,h);
 	flock.setBoundmode(1);
     c.run(alphaRectangleFunction);
 }
+*/
