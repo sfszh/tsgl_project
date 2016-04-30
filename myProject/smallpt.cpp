@@ -70,8 +70,8 @@ Sphere spheres[] = {//Scene: radius, position, emission, color, material
 	Sphere(1e5, Vec(50,40.8,-1e5+170), Vec(),Vec(),           DIFF),//Frnt
 	Sphere(1e5, Vec(50, 1e5, 81.6),    Vec(),Vec(.75,.75,.75),DIFF),//Botm
 	Sphere(1e5, Vec(50,-1e5+81.6,81.6),Vec(),Vec(.75,.75,.75),DIFF),//Top
-	Sphere(16.5,Vec(27,16.5,47),       Vec(),Vec(1,1,1)*.999, DIFF),//Mirr
-	Sphere(16.5,Vec(73,16.5,78),       Vec(),Vec(1,1,1)*.999, DIFF),//Glas
+	//Sphere(16.5,Vec(27,16.5,47),       Vec(),Vec(1,1,1)*.999, DIFF),//Mirr
+	Sphere(16.5,Vec(50,16.5,78),       Vec(),Vec(1,1,1)*.999, DIFF),//Glas
 	Sphere(600, Vec(50,681.6-.27,81.6),Vec(12,12,12),  Vec(), DIFF) //Lite
 };
 
@@ -109,11 +109,14 @@ Vec radiance(const Ray &r, int depth, unsigned short *Xi){
 		radiance(reflRay,depth,Xi)*RP:radiance(Ray(x,tdir),depth,Xi)*TP) :
 		radiance(reflRay,depth,Xi)*Re+radiance(Ray(x,tdir),depth,Xi)*Tr);
 }
+int w = 204;
+int h = 154;
+
 void go (Cart& can) {
-	int w=102, h=77, samps = 40; // # samples
+	int samps = 10; // # samples
 	Ray cam(Vec(50,52,295.6), Vec(0,-0.042612,-1).norm()); // cam pos, dir
 	Vec cx=Vec(w*.5135/h), cy=(cx%cam.d).norm()*.5135, r, *c=new Vec[w*h];
-	#pragma omp parallel for schedule(dynamic, 1) private(r)       // OpenMP
+	#pragma omp parallel for num_threads(4) private(r) //schedule(dynamic, 1) private(r)       // OpenMP
 	//for(int aaa = 0; aaa < 5; aaa++ ){
 	for (int y=0; y<h; y++){                       // Loop over image rows
 		fprintf(stderr,"\rRendering (%d spp) %5.2f%%",samps*4,100.*y/(h-1));
@@ -129,26 +132,16 @@ void go (Cart& can) {
 						r = r + radiance(Ray(cam.o+d*140,d.norm()),0,Xi)*(1./samps);
 					} // Camera rays are pushed ^^^^^ forward to start in interior
 					c[i] = c[i] + Vec(clamp(r.x),clamp(r.y),clamp(r.z))*.25;
-					//ColorFloat tColor(c[x+y*w].x,c[x+y*w].y, c[x+y*w].z,1.0f);
-					//can.Canvas::drawPixel(y, x, tColor);
 				}
 			}
-			/*
-			ColorFloat tColor(c[x+y*w].x,c[x+y*w].y, c[x+y*w].z,1.0f);
-			//printf("%d %d %d \n", toInt(c[x+y*w].x), toInt(c[x+y*w].y), toInt(c[x+y*w].z));
-			can.Canvas::drawPixel(y, x, tColor);
-			*/
+			
+			ColorFloat tColor(c[(h-y-1)*w+x].x,c[(h-y-1)*w+x].y, c[(h-y-1)*w+x].z,1.0f);
+			//printf("%d %d %d \n", toInt(c[(h-y-1)*w+x].x), toInt(c[(h-y-1)*w+x].y), toInt(c[(h-y-1)*w+x].z));
+			can.Canvas::drawPixel(h-y-1, x, tColor);
+			
 		}
 	}
 	//}
-	std::cout << "Begin to Draw" << std::endl;
-	for(int y = 0; y < h; y++ ) {
-		for( int x = 0; x < w; x++ ) {
-			ColorFloat tColor(c[x+y*w].x,c[x+y*w].y, c[x+y*w].z,1.0f);
-			//printf("%d %d %d \n", toInt(c[x+y*w].x), toInt(c[x+y*w].y), toInt(c[x+y*w].z));
-			can.Canvas::drawPixel(y, x, tColor);
-		}
-	}
 	/*
 	FILE *f = fopen("image.ppm", "w");         // Write image to PPM file.
 	fprintf(f, "P3\n%d %d\n%d\n", w, h, 255);
@@ -160,6 +153,6 @@ void go (Cart& can) {
 
 int main(int argc, char *argv[]){
 	std::cout << "Start Raytracing" << std::endl;
-	Cart c4(0, 0, 102, 77, -2, -1.125, 1, 1.125, "Ray Tracing", FRAME / 2);
+	Cart c4(0, 0, w, h, -2, -1.125, 1, 1.125, "Ray Tracing", FRAME / 2);
 	c4.run(go);
 }
