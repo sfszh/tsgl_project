@@ -3,6 +3,7 @@
 #include <stdio.h>  //        Remove "-fopenmp" for g++ version < 4.2
 #include <random>
 #include <tsgl.h>
+#include <Timer.h>
 using namespace tsgl;
 
 #define M_PI ((double)3.14159265358979)
@@ -52,10 +53,10 @@ struct Sphere {
 	double rad;       // radius
 	Vec p, e, c;      // position, emission, color
 	Refl_t refl;      // reflection type (DIFFuse, SPECular, REFRactive)
-	
+
 	Sphere(double rad_, Vec p_, Vec e_, Vec c_, Refl_t refl_):
 		rad(rad_), p(p_), e(e_), c(c_), refl(refl_) {}
-	
+
 	double intersect(const Ray &r) const { // returns distance, 0 if nohit
 		Vec op = p-r.o; // Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
 		double t, eps=1e-4, b=op.dot(r.d), det=b*b-op.dot(op)+rad*rad;
@@ -70,8 +71,8 @@ Sphere spheres[] = {//Scene: radius, position, emission, color, material
 	Sphere(1e5, Vec(50,40.8,-1e5+170), Vec(),Vec(),           DIFF),//Frnt
 	Sphere(1e5, Vec(50, 1e5, 81.6),    Vec(),Vec(.75,.75,.75),DIFF),//Botm
 	Sphere(1e5, Vec(50,-1e5+81.6,81.6),Vec(),Vec(.75,.75,.75),DIFF),//Top
-	//Sphere(16.5,Vec(27,16.5,47),       Vec(),Vec(1,1,1)*.999, DIFF),//Mirr
-	Sphere(16.5,Vec(50,16.5,78),       Vec(),Vec(1,1,1)*.999, DIFF),//Glas
+	Sphere(16.5,Vec(27,16.5,47),       Vec(),Vec(1,1,1)*.999, SPEC),//Mirr
+	Sphere(16.5,Vec(50,16.5,78),       Vec(),Vec(1,1,1)*.999, REFR),//Glas
 	Sphere(600, Vec(50,681.6-.27,81.6),Vec(12,12,12),  Vec(), DIFF) //Lite
 };
 
@@ -109,39 +110,57 @@ Vec radiance(const Ray &r, int depth, unsigned short *Xi){
 		radiance(reflRay,depth,Xi)*RP:radiance(Ray(x,tdir),depth,Xi)*TP) :
 		radiance(reflRay,depth,Xi)*Re+radiance(Ray(x,tdir),depth,Xi)*Tr);
 }
-int w = 204;
-int h = 154;
+int w = 300;
+int h = 200;
 
 void go (Cart& can) {
-	int samps = 10; // # samples
+	int samps = 5; // # samples
 	Ray cam(Vec(50,52,295.6), Vec(0,-0.042612,-1).norm()); // cam pos, dir
 	Vec cx=Vec(w*.5135/h), cy=(cx%cam.d).norm()*.5135, r, *c=new Vec[w*h];
-	#pragma omp parallel for num_threads(4) private(r) //schedule(dynamic, 1) private(r)       // OpenMP
-	//for(int aaa = 0; aaa < 5; aaa++ ){
-	for (int y=0; y<h; y++){                       // Loop over image rows
-		fprintf(stderr,"\rRendering (%d spp) %5.2f%%",samps*4,100.*y/(h-1));
-		unsigned short Xi[3]= {0,0,y*y*y};
-		for (unsigned short x=0; x<w; x++){   // Loop cols
-			for (int sy=0, i=(h-y-1)*w+x; sy<2; sy++){     // 2x2 subpixel rows
-				for (int sx=0; sx<2; sx++, r=Vec()){        // 2x2 subpixel cols
-					for (int s=0; s<samps; s++){
-						double r1=2*erand48(Xi), dx=r1<1 ? sqrt(r1)-1: 1-sqrt(2-r1);
-						double r2=2*erand48(Xi), dy=r2<1 ? sqrt(r2)-1: 1-sqrt(2-r2);
-						Vec d = cx*( ( (sx+.5 + dx)/2 + x)/w - .5) +
-							cy*( ( (sy+.5 + dy)/2 + y)/h - .5) + cam.d;
-						r = r + radiance(Ray(cam.o+d*140,d.norm()),0,Xi)*(1./samps);
-					} // Camera rays are pushed ^^^^^ forward to start in interior
-					c[i] = c[i] + Vec(clamp(r.x),clamp(r.y),clamp(r.z))*.25;
+	Timer* timer = new Timer(0.001F);
+	double *periods = new double[w*h];
+	//while(true){
+#pragma omp parallel for num_threads(4) private(r)       // schedule(dynamic, 1)  num_threads(4) private(r) //
+  
+		for (int y=0; y<h; y++){                       // Loop over image rows
+			fprintf(stderr,"\rRendering (%d spp) %5.2f%%",samps*4,100.*y/(h-1));
+			unsigned short Xi[3]= {0,0,y*y*y};
+			for (unsigned short x=0; x<w; x++){   // Loop cols
+				double startTime =  timer->getTime();
+				int i=(h-y-1)*w+x;
+				for (int sy=0; sy<2; sy++){     // 2x2 subpixel rows
+					for (int sx=0; sx<2; sx++, r=Vec()){        // 2x2 subpixel cols
+						for (int s=0; s<samps; s++){
+							double r1=2*erand48(Xi), dx=r1<1 ? sqrt(r1)-1: 1-sqrt(2-r1);
+							double r2=2*erand48(Xi), dy=r2<1 ? sqrt(r2)-1: 1-sqrt(2-r2);
+							Vec d = cx*( ( (sx+.5 + dx)/2 + x)/w - .5) +
+								cy*( ( (sy+.5 + dy)/2 + y)/h - .5) + cam.d;
+							r = r + radiance(Ray(cam.o+d*140,d.norm()),0,Xi)*(1./samps);
+						} // Camera rays are pushed ^^^^^ forward to start in interior
+						c[i] = c[i] + Vec(clamp(r.x),clamp(r.y),clamp(r.z))*.25;
+					}
 				}
+				double period = timer->getTime() - startTime;
+				periods[i] = period;
+				//std::cout << period << std::endl;
+				ColorFloat tColor(c[(h-y-1)*w+x].x,c[(h-y-1)*w+x].y, c[(h-y-1)*w+x].z,1.0f);
+				//printf("%d %d %d \n", toInt(c[(h-y-1)*w+x].x), toInt(c[(h-y-1)*w+x].y), toInt(c[(h-y-1)*w+x].z));
+				can.Canvas::drawPixel(h-y-1, x, tColor);
+
 			}
-			
-			ColorFloat tColor(c[(h-y-1)*w+x].x,c[(h-y-1)*w+x].y, c[(h-y-1)*w+x].z,1.0f);
-			//printf("%d %d %d \n", toInt(c[(h-y-1)*w+x].x), toInt(c[(h-y-1)*w+x].y), toInt(c[(h-y-1)*w+x].z));
-			can.Canvas::drawPixel(h-y-1, x, tColor);
-			
 		}
-	}
+		std::cout << can.getTime() << std::endl;
 	//}
+		/*
+		std::cout << "write distribution" << std::endl;
+		FILE *f = fopen("distribution.txt", "wb");
+		for (int i=0; i<w*h; i++){
+			fprintf(f, "%f\t", periods[i]);
+			std::cout << periods[i] << std::endl;
+		}
+		fclose(f);
+		std::cout << "end of file" << std::endl;
+		*/
 	/*
 	FILE *f = fopen("image.ppm", "w");         // Write image to PPM file.
 	fprintf(f, "P3\n%d %d\n%d\n", w, h, 255);
